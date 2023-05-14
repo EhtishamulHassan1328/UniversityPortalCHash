@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -27,38 +28,72 @@ namespace checking
         {
             SqlConnection conn = new SqlConnection("Data Source=DESKTOP-GG6QOPE;Initial Catalog=FlexDB;Integrated Security=True");
             conn.Open();
-            MessageBox.Show("Connection Open");
-            SqlCommand cm;
+            SqlCommand cmd;
 
-            string un = textBox1.Text;
-            string pass = textBox2.Text;
+            string name = textBox1.Text;
+            string password = textBox2.Text;
 
-            string query = "SELECT * FROM Faculty WHERE Name = '" + un + "' AND Password = '" + pass + "'";
-            cm = new SqlCommand(query, conn);
-
-            SqlDataReader res = cm.ExecuteReader();
-
-            if (!res.HasRows)
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("No such user found");
+                label4.Text = "Please enter both username and password.";
+                return;
             }
             else
             {
+                string query = "SELECT * FROM Faculty WHERE Name = @Name AND Password = @Password";
+                cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Name", name);
+                cmd.Parameters.AddWithValue("@Password", password);
 
-                MessageBox.Show("Successfully logged in!");
+                SqlDataReader res = cmd.ExecuteReader();
+
+                if (!res.HasRows)
+                {
+                    label4.Text = "Username or Password is incorrect.";
+                    return;
+                }
+                else
+                {
+                    FacultyOptions facultyOption = new FacultyOptions();
+                    facultyOption.Show();
+                    this.Visible = false;
+                    conn.Close();
+
+                    string eventName = "Faculty Login";
+                    DateTime eventDate = DateTime.Now;
+                    string userId = name;
+                    string ipAddress = "127.0.0.1";
+
+
+                    using (SqlCommand cmd1 = new SqlCommand("INSERT INTO auditLog (EventName, EventDate, UserId, EventDetails) VALUES (@EventName, @EventDate, @UserId, @EventDetails)", conn))
+                    {
+                        cmd1.Parameters.AddWithValue("@EventName", eventName);
+                        cmd1.Parameters.AddWithValue("@EventDate", eventDate);
+                        cmd1.Parameters.AddWithValue("@UserId", userId);
+                        cmd1.Parameters.AddWithValue("@EventDetails", "IP Address: " + ipAddress);
+
+                        conn.Open();
+                        cmd1.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
             }
 
-            Console.WriteLine("After method call, value of res : {0}", res);
-            cm.Dispose();
             conn.Close();
             this.Close();
         }
+
 
         private void button2_Click(object sender, EventArgs e)
         {
             Welcome welcome = new Welcome();
             welcome.Show();
             this.Visible = false;
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

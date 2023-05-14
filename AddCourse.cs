@@ -30,19 +30,33 @@ namespace checking
 
         private void button1_Click(object sender, EventArgs e)
         {
+            string courseID = textBox1.Text.Trim();
+            string courseCode = textBox2.Text.Trim();
+            string courseName = textBox3.Text.Trim();
+            string creditHoursText = textBox4.Text.Trim();
+            string semester = textBox5.Text.Trim();
+            string preReqCourseID = textBox6.Text.Trim();
+
+            // Check if any field is empty
+            if (string.IsNullOrEmpty(courseID) || string.IsNullOrEmpty(courseCode) ||
+                string.IsNullOrEmpty(courseName) || string.IsNullOrEmpty(creditHoursText) ||
+                string.IsNullOrEmpty(semester) || string.IsNullOrEmpty(preReqCourseID))
+            {
+                label9.Text = "Please fill in all fields.";
+                return;
+            }
+
+            // Parse credit hours as integer
+            if (!int.TryParse(creditHoursText, out int creditHours))
+            {
+                label9.Text = "Credit hours must be a number.";
+                return;
+            }
+
             SqlConnection conn = new SqlConnection("Data Source=DESKTOP-GG6QOPE;Initial Catalog=FlexDB;Integrated Security=True");
             conn.Open();
 
             SqlCommand cm;
-
-            string courseID = textBox1.Text;
-            string courseCode = textBox2.Text;
-            string courseName = textBox3.Text;
-            int creditHours = int.Parse(textBox4.Text);
-            string semester = textBox5.Text;
-            string preReqCourseID = textBox6.Text;
-
-
             string query = "INSERT INTO Courses (CourseID, CourseCode, CourseName, CreditHours, Semester, PreRequisiteCourseID) " +
                             $"VALUES ('{courseID}', '{courseCode}', '{courseName}', {creditHours}, '{semester}', '{preReqCourseID}')";
 
@@ -52,10 +66,8 @@ namespace checking
             cm.ExecuteNonQuery();
             cm.Dispose();
             conn.Close();
-
-       
-
         }
+
 
         private void button5_Click(object sender, EventArgs e)
         {

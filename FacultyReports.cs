@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace checking
 {
-    public partial class ReportGenerate : Form
+    public partial class FacultyReports : Form
     {
-        public ReportGenerate()
+        public FacultyReports()
         {
             InitializeComponent();
         }
@@ -22,21 +22,33 @@ namespace checking
             switch (comboBox2.SelectedIndex)
             {
                 case 0:
-                    OfferReport offer = new OfferReport();
-                    offer.Show();
+                    AttendanceReport att = new AttendanceReport();
+                    att.Show();
                     this.Visible = false;
-
                     break;
+
                 case 1:
-                    SectionReport secrep = new SectionReport();
-                    secrep.Show();
+                    EvaluationReport att1 = new EvaluationReport();
+                    att1.Show();
+                    this.Visible = false;
+                    break;
+
+                case 2:
+                    GradeReport grd = new GradeReport();
+                    grd.Show();
+                    this.Visible = false;
+                    break;
+
+                case 3:
+                    GradeCount fac2 = new GradeCount();
+                    fac2.Show();
                     this.Visible = false;
 
                     break;
-                case 2:
-                    // Show the admin login screen
-                    AllocReport alloc = new AllocReport();
-                    alloc.Show();
+
+                case 4:
+                    FeedbackReport fac3 = new FeedbackReport();
+                    fac3.Show();
                     this.Visible = false;
 
                     break;
@@ -47,8 +59,8 @@ namespace checking
 
         private void button5_Click(object sender, EventArgs e)
         {
-            AdminOptions adm = new AdminOptions();
-            adm.Show();
+            FacultyOptions fac2 = new FacultyOptions();
+            fac2.Show();
             this.Visible = false;
         }
     }

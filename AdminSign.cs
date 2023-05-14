@@ -45,6 +45,25 @@ namespace checking
                 label6.Text = "Admin Successfully Registered.";
                 cm.ExecuteNonQuery();
                 cm.Dispose();
+                conn.Close();
+
+                string eventName = "Admin SignUp";
+                DateTime eventDate = DateTime.Now;
+                string userId = un;
+                string ipAddress = "127.0.0.1";
+
+
+                using (SqlCommand cmd1 = new SqlCommand("INSERT INTO auditLog (EventName, EventDate, UserId, EventDetails) VALUES (@EventName, @EventDate, @UserId, @EventDetails)", conn))
+                {
+                    cmd1.Parameters.AddWithValue("@EventName", eventName);
+                    cmd1.Parameters.AddWithValue("@EventDate", eventDate);
+                    cmd1.Parameters.AddWithValue("@UserId", userId);
+                    cmd1.Parameters.AddWithValue("@EventDetails", "IP Address: " + ipAddress);
+
+                    conn.Open();
+                    cmd1.ExecuteNonQuery();
+                    conn.Close();
+                }
             }
             conn.Close();
         }
@@ -63,6 +82,11 @@ namespace checking
             Welcome welcome = new Welcome();
             welcome.Show();
             this.Visible = false;
+        }
+
+        private void AdminSign_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

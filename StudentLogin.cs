@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace checking
@@ -54,25 +55,51 @@ namespace checking
             {
                 SqlConnection conn = new SqlConnection("Data Source=DESKTOP-GG6QOPE;Initial Catalog=FlexDB;Integrated Security=True");
                 conn.Open();
-                MessageBox.Show("Connection Open");
+                //MessageBox.Show("Connection Open");
                 SqlCommand cm;
 
                 string un = textBox1.Text;
                 string pass = textBox2.Text;
 
-                string query = "SELECT * FROM Student WHERE Name = '" + un + "' AND Password = '" + pass + "'";
+                string query = "SELECT * FROM Student WHERE StudentId = '" + un + "' AND Password = '" + pass + "'";
                 cm = new SqlCommand(query, conn);
 
                 SqlDataReader res = cm.ExecuteReader();
 
                 if (!res.HasRows)
                 {
-                    MessageBox.Show("No such user found");
+                    //MessageBox.Show("No such user found");
+                    label4.Text = "No such User Found.";
+
                 }
                 else
                 {
 
-                    MessageBox.Show("Successfully logged in!");
+                    //MessageBox.Show("Successfully logged in!");
+                    label4.Text = "Successfully Logged In";
+                    StudentOptions fac2 = new StudentOptions();
+                    fac2.Show();
+                    this.Visible = false;
+                    conn.Close();
+
+                    string eventName = "Admin Login";
+                    DateTime eventDate = DateTime.Now;
+                    string userId = un;
+                    string ipAddress = "127.0.0.1";
+
+
+                    using (SqlCommand cmd1 = new SqlCommand("INSERT INTO auditLog (EventName, EventDate, UserId, EventDetails) VALUES (@EventName, @EventDate, @UserId, @EventDetails)", conn))
+                    {
+                        cmd1.Parameters.AddWithValue("@EventName", eventName);
+                        cmd1.Parameters.AddWithValue("@EventDate", eventDate);
+                        cmd1.Parameters.AddWithValue("@UserId", userId);
+                        cmd1.Parameters.AddWithValue("@EventDetails", "IP Address: " + ipAddress);
+
+                        conn.Open();
+                        cmd1.ExecuteNonQuery();
+                        conn.Close();
+                    }
+
                 }
 
                 Console.WriteLine("After method call, value of res : {0}", res);

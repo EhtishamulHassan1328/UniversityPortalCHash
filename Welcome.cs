@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -96,5 +97,35 @@ namespace checking
             }
 
         }
+
+        private void Welcome_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+
+            string eventName = "Button Click";
+            DateTime eventDate = DateTime.Now;
+            string userId = "User123";
+            string ipAddress = "127.0.0.1";
+
+            using (SqlConnection conn = new SqlConnection("Data Source=DESKTOP-GG6QOPE;Initial Catalog=FlexDB;Integrated Security=True"))
+            {
+                using (SqlCommand cmd = new SqlCommand("INSERT INTO auditLog (EventName, EventDate, UserId, EventDetails) VALUES (@EventName, @EventDate, @UserId, @EventDetails)", conn))
+                {
+                    cmd.Parameters.AddWithValue("@EventName", eventName);
+                    cmd.Parameters.AddWithValue("@EventDate", eventDate);
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.Parameters.AddWithValue("@EventDetails", "IP Address: " + ipAddress);
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+                }
+            }
+        }
+
     }
 }

@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -21,10 +22,6 @@ namespace checking
             InitializeComponent();
         }
 
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -61,7 +58,25 @@ namespace checking
                     AdminOptions adminOption = new AdminOptions();
                     adminOption.Show();
                     this.Visible = false;
+                    conn.Close();
 
+                    string eventName = "Admin Login";
+                    DateTime eventDate = DateTime.Now;
+                    string userId = un;
+                    string ipAddress = "127.0.0.1";
+
+
+                    using (SqlCommand cmd = new SqlCommand("INSERT INTO auditLog (EventName, EventDate, UserId, EventDetails) VALUES (@EventName, @EventDate, @UserId, @EventDetails)", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@EventName", eventName);
+                        cmd.Parameters.AddWithValue("@EventDate", eventDate);
+                        cmd.Parameters.AddWithValue("@UserId", userId);
+                        cmd.Parameters.AddWithValue("@EventDetails", "IP Address: " + ipAddress);
+
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
                     //break;
                 }
 
@@ -85,6 +100,11 @@ namespace checking
             Welcome welcome = new Welcome();
             welcome.Show();
             this.Visible = false;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

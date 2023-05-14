@@ -188,6 +188,7 @@
             // button2
             // 
             this.button2.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.button2.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.Color.White;
             this.button2.Location = new System.Drawing.Point(121, 51);
@@ -221,6 +222,7 @@
             this.Controls.Add(this.pictureBox1);
             this.Name = "AdminSign";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.AdminSign_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

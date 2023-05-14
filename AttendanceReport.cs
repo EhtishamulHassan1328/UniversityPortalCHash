@@ -1,0 +1,93 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace checking
+{
+    public partial class AttendanceReport : Form
+    {
+        public AttendanceReport()
+        {
+            InitializeComponent();
+        }
+
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string courseName = textBox1.Text;
+
+            if (string.IsNullOrWhiteSpace(courseName))
+            {
+                label3.Text = "Please enter a course name.";
+                return;
+            }
+
+            string query = $"SELECT * FROM Attendance WHERE CourseID = @CourseID";
+
+            using (SqlConnection conn = new SqlConnection("Data Source=DESKTOP-GG6QOPE;Initial Catalog=FlexDB;Integrated Security=True"))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@CourseID", courseName);
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        adapter.Fill(dt);
+
+                        if (dt.Rows.Count == 0)
+                        {
+                            label3.Text = $"No attendance record found for {courseName}.";
+                            dataGridView1.DataSource = null;
+                        }
+                        else
+                        {
+                            label3.Text = "";
+                            dataGridView1.DataSource = dt;
+                        }
+                    }
+                }
+                conn.Close();
+            }
+        }
+
+        private void AttendanceReport_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            FacultyReports fac = new FacultyReports();
+            fac.Show();
+            this.Visible = false;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
